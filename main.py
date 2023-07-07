@@ -1,22 +1,27 @@
 import pandas as pd
 import logging
 import re
-from Bio.Blast import NCBIWWW
+from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+import subprocess
 from Bio.Blast import NCBIXML
-from Bio import Entrez
+import primer3
 
-logging.basicConfig(level=logging.INFO)
+# Configure logging
+logging.basicConfig(
+    filename="blast.log",
+    level=logging.DEBUG,
+    format="%(asctime)s %(levelname)s:%(message)s",
+)
 
 assoc_path = "assoc_res2.assoc"
 
-# Read the assoc file with pandas
-# sep="\s+" tells pandas to use one or more spaces as the separator
 df = pd.read_csv(assoc_path, sep="\s+")
 
 logging.info("Successfully read assoc file.")
 
 header_names = df.columns.tolist()
-print(header_names)
 
 # Filter DataFrame
 df_filtered = df[
@@ -36,41 +41,104 @@ merged_df = pd.merge(
     df_filtered, filtered_probes_df, left_on="SNP", right_on="Probe Set ID"
 )
 
+
 # Create a new column 'Flank with LVP', replace brackets with corresponding A1 values
 merged_df["Flank with LVP"] = [
     re.sub(r"\[.*?\]", a1, flank)
     for a1, flank in zip(merged_df["A1"], merged_df["Flank"])
 ]
 
+
 # sort the data frame by BP smallest to largest
 merged_df.sort_values(by=["BP"], inplace=True)
 
+# Write the 'Flank with LVP' sequences to a FASTA file
+with open("input.fasta", "w") as f:
+    for i, row in merged_df.iterrows():
+        sequence = SeqRecord(Seq(row["Flank with LVP"]), id=row["SNP"])
+        SeqIO.write(sequence, f, "fasta")
 
-print(merged_df)
 
-# Always tell NCBI who you are
-Entrez.email = "ryandonofrio@gmail.com"
+subprocess.run(
+    [
+        "blastn",
+        "-query",
+        "input.fasta",
+        "-db",
+        "AAE5.fna",
+        "-out",
+        "output.xml",
+        "-outfmt",
+        "5",
+    ]
+)
 
-# Create an empty DataFrame to store final results
+
+# Open a new dataframe to hold the final results
 final_df = pd.DataFrame()
 
+with open("output.xml") as result_handle:
+    blast_records = NCBIXML.parse(result_handle)
 
-def blast_sequence(sequence):
-    result_handle = NCBIWWW.qblast(
-        "blastn", "nt", sequence, entrez_query="txid7159[Organism:exp]"
-    )
-    blast_records = NCBIXML.read(result_handle)
-    result_handle.close()
-    return blast_records
+    for record in blast_records:
+        snp = record.query.split()[0]
+        row = merged_df.loc[merged_df["SNP"] == snp].iloc[0]
+
+        for alignment in record.alignments:
+            for hsp in alignment.hsps:
+                query = hsp.query
+                match = hsp.match
+                sbjct = hsp.sbjct
+
+                if query == sbjct:
+                    final_df = final_df.append(row)
+
+print(final_df.head())
+
+primer_params = {
+    "PRIMER_OPT_SIZE": 20,
+    "PRIMER_MIN_SIZE": 18,
+    "PRIMER_MAX_SIZE": 25,
+    "PRIMER_OPT_TM": 55.0,
+    "PRIMER_MIN_TM": 48.0,
+    "PRIMER_MAX_TM": 63.0,
+    "PRIMER_MIN_GC": 20.0,
+    "PRIMER_MAX_GC": 80.0,
+    "PRIMER_MAX_POLY_X": 3,
+    "PRIMER_PRODUCT_SIZE_RANGE": [[200, 500]],
+}
 
 
-# For each row in the dataframe, call blast_sequence
-for index, row in merged_df.iterrows():
-    blast_records = blast_sequence(row["Flank"])
-    for alignment in blast_records.alignments:
-        for hsp in alignment.hsps:
-            if hsp.query == row["Flank with LVP"]:
-                final_df = final_df.append(row)
+def design_primers(sequence, seq_id):
+    primer_params["SEQUENCE_ID"] = seq_id
+    primer_params
 
-# Save the final DataFrame
-final_df.to_csv("final_df.csv", index=False)
+
+primer_results = {}
+
+
+# Load the whole genome
+genome_record = SeqIO.read("AAE5.fna", "fasta")
+
+# Assume you have a DataFrame with SNPs and their positions
+for idx, row in final_df.iterrows():
+    sequence = row["Flank with LVP"].replace("/", "")  # remove slash if present
+    seq_id = row["SNP"]
+    bp = row["BP"]
+
+    # Define the region around the SNP (+-250 bp)
+    start = max(0, bp - 250)
+    end = bp + 250 + len(sequence)  # adjust for the length of the sequence
+
+    # Extract the region from the genome
+    region = str(genome_record.seq[start:end])
+
+    # Design primers for this sequence
+    results = design_primers(region, seq_id)
+
+    # Store the results in the dictionary
+    primer_results[seq_id] = results
+
+# Convert the results to a DataFrame for easier viewing
+primer_results_df = pd.DataFrame(primer_results).T
+print(primer_results_df.head())
