@@ -15,7 +15,7 @@ from functions import (
 ##########USER INPUTS##########
 
 # Path to the association results file
-assoc_path = "assoc_res2.assoc"
+assoc_path = r"Inputs/associaton_results.assoc"
 
 YourName = "Ryan_Test"
 
