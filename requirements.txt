@@ -1,3 +1,4 @@
-pandas
-BioPython
-openpyxl
+Bio==1.5.9
+biopython==1.81
+pandas==1.5.2
+primer3_py==2.0.0

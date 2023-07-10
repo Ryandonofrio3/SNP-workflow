@@ -4,7 +4,7 @@
   <BlastOutput_program>blastn</BlastOutput_program>
   <BlastOutput_version>BLASTN 2.14.0+</BlastOutput_version>
   <BlastOutput_reference>Zheng Zhang, Scott Schwartz, Lukas Wagner, and Webb Miller (2000), &quot;A greedy algorithm for aligning DNA sequences&quot;, J Comput Biol 2000; 7(1-2):203-14.</BlastOutput_reference>
-  <BlastOutput_db>AAE5.fna</BlastOutput_db>
+  <BlastOutput_db>Support/AAE5.fna</BlastOutput_db>
   <BlastOutput_query-ID>Query_1</BlastOutput_query-ID>
   <BlastOutput_query-def>AX-93260110 &lt;unknown description&gt;</BlastOutput_query-def>
   <BlastOutput_query-len>71</BlastOutput_query-len>
