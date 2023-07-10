@@ -74,4 +74,9 @@ shutil.move(
 )
 shutil.move(output_file_name, f"{output_folder}/{YourName}_{today}_output.xml")
 
+shutil.move(
+    f"{YourName}_{today}_final_output.fasta",
+    f"{output_folder}/{YourName}_{today}_final_output.fasta",
+)
+
 logging.info("Successfully moved files to output folder.")
