@@ -25,8 +25,6 @@ today = time.strftime("%Y-%m-%d")
 ####################################
 
 
-YourName = YourName + str(random.randint(1, 1114))
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
