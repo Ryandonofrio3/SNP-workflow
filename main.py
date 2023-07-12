@@ -11,9 +11,9 @@ from functions import (
     generate_final_output,
     design_primers,
 )
-import random
 
-##########USER INPUTS##########
+
+# #########USER INPUTS##########
 
 # Path to the association results file
 assoc_path = r"Inputs/associaton_results.assoc"
