@@ -7,9 +7,6 @@ from Bio.SeqRecord import SeqRecord
 import subprocess
 from Bio.Blast import NCBIXML
 import primer3
-import time
-import warnings
-import csv
 
 
 def process_data(assoc_path, probes_path):
@@ -166,18 +163,19 @@ def design_primers(final_df, desired_tm=60.0, desired_product_size=500):
             seq_args={
                 "SEQUENCE_ID": row["SNP"],
                 "SEQUENCE_TEMPLATE": row["Sequence"],
+                "SEQUENCE_TARGET": (1000, len(row["Flank with LVP"])),
             },
             global_args={
-                "PRIMER_OPT_SIZE": 20,
+                "PRIMER_OPT_SIZE": 18,
                 "PRIMER_PICK_INTERNAL_OLIGO": 1,
                 "PRIMER_INTERNAL_MAX_SELF_END": 8,
-                "PRIMER_MIN_SIZE": 18,
-                "PRIMER_MAX_SIZE": 25,
-                "PRIMER_OPT_TM": 60.0,
-                "PRIMER_MIN_TM": 57.0,
+                "PRIMER_MIN_SIZE": 15,
+                "PRIMER_MAX_SIZE": 30,
+                "PRIMER_OPT_TM": 57.0,
+                "PRIMER_MIN_TM": 52.0,
                 "PRIMER_MAX_TM": 63.0,
-                "PRIMER_MIN_GC": 20.0,
-                "PRIMER_MAX_GC": 80.0,
+                "PRIMER_MIN_GC": 18.0,
+                "PRIMER_MAX_GC": 88.0,
                 "PRIMER_MAX_POLY_X": 100,
                 "PRIMER_INTERNAL_MAX_POLY_X": 100,
                 "PRIMER_SALT_MONOVALENT": 50.0,

@@ -11,6 +11,7 @@ from functions import (
     generate_final_output,
     design_primers,
 )
+import random
 
 ##########USER INPUTS##########
 
@@ -23,6 +24,8 @@ today = time.strftime("%Y-%m-%d")
 
 ####################################
 
+
+YourName = YourName + str(random.randint(1, 1114))
 
 # Configure logging
 logging.basicConfig(
