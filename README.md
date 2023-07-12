@@ -7,6 +7,7 @@ Keeplist.txt
 is a two column text file with the samples you are interested in --refer to the Bed file for their exact names:
 
 Example:
+
 | Name     | Samp         |
 |----------|--------------|
 | LIVPIB12 | LIVPIB12_003 |
