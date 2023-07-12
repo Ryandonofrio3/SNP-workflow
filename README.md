@@ -52,21 +52,32 @@ Then phenotypes.txt, this is the same as keep list but with a third column
 
 All you need is a PLINK assoc file. to generate one on the lab comp you can open command prompt and write the following
 
+<br>
+<br>
 `
 cd Desktop/plink2
 `
+
 it will connect to the internet
+<br>
+<br>
+
 `
 plink --file file1 --keep keeplist.txt --make-bed --out subset
 `
+<br>
+<br>
+
 `
 plink --bfile subset --recode --out recoded_subset
 `
-
+<br>
+<br>
 `
 plink --file recoded_subset --pheno phenotypes.txt --assoc --out association_results
 `
-
+<br>
+<br>
 Bring this file into the inputs folder of the Python code and run main.py
 The output will be stored in Your name_Date_output.csv
 
