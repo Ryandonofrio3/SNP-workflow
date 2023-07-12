@@ -113,7 +113,7 @@ def process_blast_results(output_file_name, merged_df):
 
 def process_sequences_and_concatenate(final_df, AAE5_loc, chromosome_ids):
     # Write the 'Flank with LVP' sequences to a FASTA file
-    with open("final_input.fasta", "w") as f:
+    with open("Support/final_input.fasta", "w") as f:
         for i, row in final_df.iterrows():
             sequence = SeqRecord(Seq(row["Flank with LVP"]), id=row["SNP"])
             SeqIO.write(sequence, f, "fasta")
