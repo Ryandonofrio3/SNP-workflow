@@ -57,10 +57,8 @@ All you need is a PLINK assoc file. to generate one on the lab comp you can open
 
 `
 cd Desktop/plink2
-
 `
 
-it will connect to the internet
 <br>
 <br>
 
