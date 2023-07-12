@@ -50,7 +50,7 @@ Then phenotypes.txt, this is the same as keep list but with a third column
 | Hanoi    | Han_058      | 2         |
 | Hanoi    | Han_059      | 2         |
 
-All you need is a PLINK assoc file. to generate one on the lab comp you can open command prompt and write the following
+All you need is a PLINK assoc file. to generate one on the lab computer you can open command prompt and write the following
 
 <br>
 <br>
